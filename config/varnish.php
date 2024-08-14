@@ -19,7 +19,7 @@ return [
     /*
      * The port where the administrative tasks may be sent to.
      */
-    'administrative_port' => env('VARNISH_SECRET', 6082),
+    'administrative_port' => env('VARNISH_PORT', 6082),
 
     /*
      * The default amount of minutes that content rendered using the `CacheWithVarnish`
