@@ -4,7 +4,7 @@ return [
     /*
      * The hostname(s) this Laravel app is listening to.
      */
-    'host' => [env('APP_URL')],
+    'host' => [str_replace(['http://', 'https://'], '', env('APP_URL'))],
 
     /*
      * The location of the file containing the administrative password.
