@@ -4,17 +4,22 @@ return [
     /*
      * The hostname(s) this Laravel app is listening to.
      */
-    'host' => ['example.com'],
+    'host' => [env('APP_URL')],
 
     /*
      * The location of the file containing the administrative password.
      */
-    'administrative_secret' => '/etc/varnish/secret',
+    'administrative_secret' => env('VARNISH_SECRET'),
 
     /*
      * The port where the administrative tasks may be sent to.
      */
-    'administrative_port' => 6082,
+    'administrative_host' => env('VARNISH_HOST', '127.0.0.1'),
+
+    /*
+     * The port where the administrative tasks may be sent to.
+     */
+    'administrative_port' => env('VARNISH_SECRET', 6082),
 
     /*
      * The default amount of minutes that content rendered using the `CacheWithVarnish`

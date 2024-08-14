@@ -2,6 +2,8 @@
 
 namespace Spatie\Varnish;
 
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
@@ -31,12 +33,28 @@ class Varnish
     {
         $host = $host ?? config('varnish.host');
 
-        if (! is_array($host)) {
+        if (!is_array($host)) {
             $host = [$host];
         }
 
         return $host;
     }
+
+    /**
+     * @return string
+     */
+    protected function getSecretPath(): string
+    {
+        $path = Storage::drive('local')->path('varnish_secret');
+
+        if (!File::exists($path)) {
+            $secret = config('varnish.administrative_secret');
+            File::put($path, $secret);
+        }
+
+        return $path;
+    }
+
 
     /**
      * @param array $hosts
@@ -54,12 +72,15 @@ class Varnish
         $config = config('varnish');
 
         $urlRegex = '';
-        if (! empty($url)) {
+        if (!empty($url)) {
             $urlRegex = " && req.url ~ {$url}";
         }
 
-        return "sudo varnishadm -S {$config['administrative_secret']} -T 127.0.0.1:{$config['administrative_port']} 'ban req.http.host ~ {$hostsRegex}{$urlRegex}'";
+        $secretPath = $this->getSecretPath();
+
+        return "sudo varnishadm -S {$secretPath} -T {$config['administrative_host']}:{$config['administrative_port']} 'ban req.http.host ~ {$hostsRegex}{$urlRegex}'";
     }
+
 
     protected function executeCommand(string $command): Process
     {
@@ -67,7 +88,7 @@ class Varnish
 
         $process->run();
 
-        if (! $process->isSuccessful()) {
+        if (!$process->isSuccessful()) {
             throw new ProcessFailedException($process);
         }
 
