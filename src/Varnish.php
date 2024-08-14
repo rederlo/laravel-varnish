@@ -78,7 +78,7 @@ class Varnish
 
         $secretPath = $this->getSecretPath();
 
-        return "sudo varnishadm -S {$secretPath} -T {$config['administrative_host']}:{$config['administrative_port']} 'ban req.http.host ~ {$hostsRegex}{$urlRegex}'";
+        return "varnishadm -S {$secretPath} -T {$config['administrative_host']}:{$config['administrative_port']} 'ban req.http.host ~ {$hostsRegex}{$urlRegex}'";
     }
 
 
